@@ -1,26 +1,68 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
+import { BrowserRouter as Router, Route, Link } from 'react-router-dom';
+import Nav from './Nav';
+import Home from './Home';
+import Users from './Users';
+import Posts from './Posts';
+import OneUser from './OneUser';
 import './App.css';
 
 class App extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      userList: ['Jeff', 'Grant', 'Susan'],
+      userPosts: {
+        Jeff: [
+          'I went to the store 2day',
+          'I wonder what vegan cheese tastes like',
+          'Where is Canada?'
+        ],
+        Grant: ['Sometimes I dream of pudding', 'What is it like to be cool'],
+        Susan: [
+          'Going live on instagram in 20 minutes',
+          'Buy some stuff with my promo code'
+        ]
+      }
+    };
+  }
+
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-        </header>
-      </div>
+      <Router>
+        <div className='App'>
+          <Nav />
+          <Route path='/' exact component={Home} />
+          <Route
+            path='/users'
+            render={props => {
+              return <Users userList={this.state.userList} {...props} />;
+            }}
+          />
+          <Route
+            path='/posts'
+            render={props => {
+              return (
+                <Posts
+                  postList={Object.values(this.state.userPosts)}
+                  {...props}
+                />
+              );
+            }}
+          />
+          <Route
+            path='/users/:name'
+            render={props => {
+              return (
+                <OneUser
+                  postList={this.state.userPosts[props.match.params.name]}
+                  {...props}
+                />
+              );
+            }}
+          />
+        </div>
+      </Router>
     );
   }
 }
